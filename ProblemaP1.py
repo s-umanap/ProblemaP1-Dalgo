@@ -17,3 +17,16 @@ try:
     print("Lines in file:     ", lcnt)
 except IOError as e:
     print("I/O error occurred:", strerror(e.errno))
+    
+    
+    
+    
+##opcion 2
+
+def leer_P1(archivo):
+    
+    retorno = list(map(str,open(archivo)))
+    for cada_linea in retorno:
+        cada_linea.replace("\n"," ")
+    return(retorno)
+print(leer_P1("P1.in"))
