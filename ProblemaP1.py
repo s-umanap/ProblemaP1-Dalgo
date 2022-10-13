@@ -26,7 +26,7 @@ except IOError as e:
 def leer_P1(archivo):
     
     retorno = list(map(str,open(archivo)))
-    for cada_linea in retorno:
-        cada_linea.replace("\n"," ")
+    longitud = int(retorno[0])
+    retorno = retorno[1:longitud+1]
     return(retorno)
 print(leer_P1("P1.in"))
