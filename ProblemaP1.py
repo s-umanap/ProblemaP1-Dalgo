@@ -1,4 +1,5 @@
-#c.caro rama prueba
+#
+#
 from os import strerror
 
 try:
