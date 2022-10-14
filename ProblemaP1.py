@@ -33,10 +33,10 @@ print(leer_P1("P1.in"))
 
 ## funciones útiles
 def chain_and_subchain(Chain,Subchain):
-    len_chain = len(Chain);
-    len_subchain = len(Subchain);  
+    len_chain = len(Chain); #longitud de la cadena
+    len_subchain = len(Subchain); #longitud de la subcadena
+     
     apariciones = 0
-    
     if (len_chain == 0 or len_chain < len_subchain):# Caso base 
         apariciones = 0;
         return apariciones;
@@ -47,19 +47,28 @@ def chain_and_subchain(Chain,Subchain):
  
     return chain_and_subchain(Chain[1:],Subchain);#Caso:ya no hay más iteraciones contables, se obtiene el total
 
-def first_last(Chain,Subchain):
+
+def interlaved(Chain,Subchain,posicion):
     
-    slic = Chain[0]+Chain[-1] #se hace slice del primer caracter y el último
-    inverted = slic[::-1] #se invierte el slice hecho anteriormente
-    apariciones = 0
-    if (Subchain == slic) or (Subchain == inverted): #se compara con el subchain los dos casos
-        apariciones = 1
-    return(apariciones)
+    len_chain = len(Chain);#longitud de la cadena
+    occ = 0 #contador de ocurrencias 
+    for compare in range(posicion+2,len_chain):#se miran todas las posiciones sin contar la que está pegada, es decir que, 0 y 1 no se comparan
+        temporal_chain_pair = Chain[posicion]+Chain[compare] #se crea una subcadena de los chars intercalados
+            
+        if temporal_chain_pair == Subchain: #se compara la subcadena creada con la original
+            occ +=1 #si se cumple el condicional, se suma 1 aparición
+    return occ
 
-
-def total_apariciones(Chain,Subchain): #funcion para sacar el total
-    cadena_sin_modificaciones = chain_and_subchain(Chain,Subchain)
-    primera_ultima = first_last(Chain,Subchain)
+def all_interlaved(Chain,Subchain):
+    total = 0 #total de apariciones de la subcadena en el intercalado
     
-    return(cadena_sin_modificaciones + primera_ultima) #llamar a las funciones que se encargan de contar las apariciones de Y en X.
+    for posicion in range(len(Chain)): #se recorre la cadena y se va reduciendo
+        total += interlaved(Chain, Subchain, posicion) #se usa recursivamente la funcion anterior
+        #como se va reduciendo,la chain gracias a que vamos avanzando de posiciones, es recurrente
+    return total
 
+def total_apariciones(Chain,Subchain): #funcion para sacar el total llamando funciones auxiliares
+    cadena_sin_modificaciones = chain_and_subchain(Chain,Subchain)#se mira la cadena recursivamente 1 a 1
+    interlaved_total = all_interlaved(Chain,Subchain)#se miran las apariciones de que no se encuentren cercanos
+    
+    return(cadena_sin_modificaciones + interlaved_total) #total de apariciones sumando lo encontrado por las dos funciones
