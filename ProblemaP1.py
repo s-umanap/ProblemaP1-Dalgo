@@ -1,35 +1,10 @@
-#
-#
-from os import strerror
+import sys
 
-try:
-    ccnt = lcnt = 0
-    stream = open("P1.in", "rt", encoding = "utf-8")
-    line = stream.readline()
-    while line != '':
-        lcnt += 1
-        for ch in line:
-            print(ch, end='')
-            ccnt += 1
-        line = stream.readline()
-    stream.close()
-    print("\n\nCharacters in file:", ccnt)
-    print("Lines in file:     ", lcnt)
-except IOError as e:
-    print("I/O error occurred:", strerror(e.errno))
-    
-    
-    
-    
-##opcion 2
-
-def leer_P1(archivo):
-    
-    retorno = list(map(str,open(archivo)))
-    longitud = int(retorno[0])
-    retorno = retorno[1:longitud+1]
-    return(retorno)
-print(leer_P1("P1.in"))
+def leer_Archivo():
+    numero_casos = int(sys.stdin.readline())
+    for __ in range(numero_casos):
+        case_list = list(map(str, sys.stdin.readline().split(" ")))
+        print(best_option(case_list[0],case_list[1],int(case_list[2])))
 
 ##Funciones necesarias
 
@@ -40,12 +15,12 @@ def chain_and_subchain(Chain,Subchain):
      
     apariciones = 0
     if (len_chain == 0 or len_chain < len_subchain):# Caso base 
-        apariciones = 0;
-        return apariciones;
+        apariciones = 0
+        return apariciones
 
     if (Chain[0 : len_subchain] == Subchain):#caso recursivo donde se compara slices con la subcadena
-        apariciones = chain_and_subchain(Chain[1:],Subchain) + 1; #se va contando la aparición en el caso
-        return apariciones;
+        apariciones = chain_and_subchain(Chain[1:],Subchain) + 1 #se va contando la aparición en el caso
+        return apariciones
  
     return chain_and_subchain(Chain[1:],Subchain);#Caso:ya no hay más iteraciones contables, se obtiene el total
 
@@ -175,3 +150,5 @@ def combination(tuples, moves):
         for j in range(i+1, moves):
             indices[j] = indices[j-1] + 1
         yield tuple(pool[i] for i in indices)
+
+leer_Archivo()
