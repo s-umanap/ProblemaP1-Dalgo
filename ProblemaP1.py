@@ -31,7 +31,9 @@ def leer_P1(archivo):
     return(retorno)
 print(leer_P1("P1.in"))
 
-## funciones útiles
+##Funciones necesarias
+
+
 def chain_and_subchain(Chain,Subchain):
     len_chain = len(Chain); #longitud de la cadena
     len_subchain = len(Subchain); #longitud de la subcadena
@@ -72,3 +74,104 @@ def total_apariciones(Chain,Subchain): #funcion para sacar el total llamando fun
     interlaved_total = all_interlaved(Chain,Subchain)#se miran las apariciones de que no se encuentren cercanos
     
     return(cadena_sin_modificaciones + interlaved_total) #total de apariciones sumando lo encontrado por las dos funciones
+
+
+def identify_letters(Chain,Subchain):
+    
+    different = []
+    for compare in range(0,len(Chain)):
+        if compare+1 < len(Chain):
+            if Chain[compare]+Chain[compare+1] != Subchain:
+                tupla = compare, compare+1
+                different.append(tupla)
+    
+    return different
+
+def all_posibilities(Chain,Subchain,moves):
+    pos = identify_letters(Chain, Subchain)
+    posibilities = combination(pos, moves)
+    list_posibilities =[]
+    for x in posibilities:
+        list_posibilities.append(x)
+    return list_posibilities
+
+def individual_options(Chain,Subchain,moves):
+    posibilities=all_posibilities(Chain, Subchain, moves)
+    list_posibilities = []
+    for x in posibilities:
+        for y in x:
+            for z in y:
+                if z not in list_posibilities:
+                    list_posibilities.append(z)
+    return list_posibilities
+
+def combinations_of_individual(Chain,Subchain,moves):
+    list_options = individual_options(Chain,Subchain,moves)
+    combinations = combination(list_options, moves)
+    all_posible_moves = []
+    for x in combinations:
+        all_posible_moves.append(list(x))
+    return all_posible_moves
+
+def try_option(Chain,Subchain,hint):
+    mayor = total_apariciones(Chain, Subchain)
+    for x in hint:
+        first= total_apariciones(change(Chain,Subchain[0],x), Subchain)
+        second = total_apariciones(change(Chain,Subchain[1],x), Subchain)
+        if first > mayor and (first >= second):
+            mayor = first
+            Chain = change(Chain,Subchain[0],x)
+        elif second > mayor and (second>= first):
+            mayor = second
+            Chain = change(Chain,Subchain[1],x)
+    return mayor
+
+def best_option(Chain,Subchain,moves):
+    all_combs = combinations_of_individual(Chain, Subchain, moves)
+    mayor = 0
+    for x in all_combs:
+        option = try_option(Chain, Subchain, x)
+        if  option > mayor:
+            mayor = option
+    return mayor
+
+def change(Chain,letter,pos):
+    lista = list(Chain)
+    lista[pos] = letter
+    final=""
+    for x in lista:
+        final+=x
+    return final
+
+def all_positions(Chain,Subchain):
+    pos = identify_letters(Chain,Subchain)
+    lista = []
+    for i in pos:
+        for j in i:
+            lista.append(j)
+    result = []
+    for item in lista:
+        if item not in result:
+            result.append(item)
+    
+    return result
+
+
+
+def combination(tuples, moves):
+    pool = tuple(tuples)
+    n = len(pool)
+    if moves > n:
+        return
+    indices = list(range(moves))
+    yield tuple(pool[i] for i in indices)
+    while True:
+        for i in reversed(range(moves)):
+            if indices[i] != i + n - moves:
+                break
+        else:
+            return
+        indices[i] += 1
+        for j in range(i+1, moves):
+            indices[j] = indices[j-1] + 1
+        yield tuple(pool[i] for i in indices)
